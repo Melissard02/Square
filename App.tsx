@@ -1,29 +1,65 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, TextInput } from 'react-native';
 
-const dialogueDay1 = ["Ow.","...","Nope.","You didn't hear anything.","...","...","Hey, wait's your name?","{name}, huh. Nice to meet you I'm a square.","What you think I have a real name? Nah, just square.","Listen if you come back tomorrow, I'll show you something cool."]
+const firstmeeting = (playerName: string) => [
+  "","Ow.","...","Nope.","You didn't hear anything.","...","...","What's your name?",`So, ${playerName || "???"}?`,"Nice to meet you I'm a square.","What you think I have a real name?", "Nah, just square.", "Hey you wanna see something cool?","Close your eyes.", "What?", "Nothing happened?", "Fine, I guess I'll close my eyes.", "Are they closed?", "Look at this!"]
 
 export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [playerName, setPlayerName] = useState('');
+  const [blackout, setBlackout] = useState(false);
 
   const handlePress = () => {
-    if (currentIndex < dialogueDay1.length - 1) {
+    if (currentIndex < firstmeeting(playerName).length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
       setCurrentIndex(0);
     }
   };
+
+  const blackoutTrigger = "Are they closed?"
+  const operationBlackout = () => {
+    setBlackout(true);
+
+    setTimeout(() => {
+      setBlackout(false);
+    }, 10);
+  };
+
+  if (!blackout && firstmeeting(playerName)[currentIndex] === blackoutTrigger) {
+    operationBlackout();
+  }
   
   return (
     <View style={styles.container}>
-      {/* Dialogue Text */}
-      <Text style={styles.dialogue}>{dialogueDay1[currentIndex]}</Text>
+      {blackout ? (
+        <View style={styles.blackout} />
+      ) : (
+        <>
+          {/* Dialogue Text */}
+          <Text style={styles.dialogue}>{firstmeeting(playerName)[currentIndex]}</Text>
+          
+          {/* Text Input */}
+          {currentIndex === 7 && (
+          <TextInput
+            style={styles.input}
+            placeholder='Enter your name'
+            value={playerName}
+            onChangeText={setPlayerName}
+            // Automatically enters the textinput window
+            //Keeping this off for now
+            // autoFocus
+            /> 
+          )}
+          
+          {/* Pressable square */}
+          <Pressable onPress={handlePress}>
+            <View style={styles.square} />
+          </Pressable>
+        </>
+      )}
       
-      {/* Pressable square */}
-      <Pressable onPress={handlePress}>
-        <View style={styles.square} />
-      </Pressable>
     </View>
   );
 }
@@ -45,22 +81,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'orange',
     marginTop: 20,
   },
+  input: {
+    width: 200,
+    height: 40,
+    backgroundColor: '#fcf6e5ff',
+    paddingHorizontal: 8,
+    marginBottom: 20,
+    borderRadius: 20,
+  },
+  blackout: {
+    flex: 1,
+    backgroundColor: 'black',
+    width: '100%',
+    height: '100%',
+  }
 });
-
-function MySquare() {
-  return (
-    <Pressable>
-      <View style={{flex: 1, justifyContent:'center', alignItems: 'center'}}>
-      <View style={{
-      width: 100,
-      height: 100,
-      backgroundColor: 'orange',
-      alignItems: 'center'
-      }} />
-      </View>
-    </Pressable>
-  )
-}
 
 
 
