@@ -1,14 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View, TextInput } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, Text, View, TextInput, Image, Button } from 'react-native';
 
 const firstmeeting = (playerName: string) => [
-  "","Ow.","...","Nope.","You didn't hear anything.","...","...","What's your name?",`So, ${playerName || "???"}?`,"Nice to meet you I'm a square.","What you think I have a real name?", "Nah, just square.", "Hey you wanna see something cool?","Close your eyes.", "What?", "Nothing happened?", "Fine, I guess I'll close my eyes.", "Are they closed?", "Look at this!"]
+  "","Ow.","...","Nope.","You didn't hear anything.","...","...","What's your name?",`So, ${playerName || "???"}?`,"Nice to meet you I'm a square.","What you think I have a real name?", "Nah, just square.", "Hey you wanna see something cool?","Close your eyes.", "What?", "Nothing happened?", "Fine, I guess I'll close my eyes.", closed, "Look at this!", "It's a bow!", "Do you like it?"]
+//
+
+const images = {
+    normal: require('./assets/2dsquare.png'),
+    threeD: require('./assets/3dsquare.png'),
+    bow: require('./assets/bow.png')
+}
+
+// const getImageForIndex = (index: number) => {
+//   if (index === 17) return images.bow;
+//   return images.normal;
+// }
 
 export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [playerName, setPlayerName] = useState('');
   const [blackout, setBlackout] = useState(false);
+  const [currentImage, setCurrentImage] = useState(images.normal)
+
+  const blackoutTrigger = closed
 
   const handlePress = () => {
     if (currentIndex < firstmeeting(playerName).length - 1) {
@@ -18,18 +33,29 @@ export default function App() {
     }
   };
 
-  const blackoutTrigger = "Are they closed?"
   const operationBlackout = () => {
     setBlackout(true);
 
     setTimeout(() => {
       setBlackout(false);
-    }, 10);
+    }, 1000);
   };
 
-  if (!blackout && firstmeeting(playerName)[currentIndex] === blackoutTrigger) {
-    operationBlackout();
-  }
+  // Run blackout
+  useEffect(() => {
+    if (firstmeeting(playerName)[currentIndex] === blackoutTrigger) {
+      operationBlackout();
+    }
+  }, [currentIndex, playerName]);
+
+
+  // Change the images
+  useEffect(() => {
+    if (currentIndex === 17) {
+      setCurrentImage(images.bow);
+    }
+  }, [currentIndex]);
+
   
   return (
     <View style={styles.container}>
@@ -37,6 +63,13 @@ export default function App() {
         <View style={styles.blackout} />
       ) : (
         <>
+          {/* Pressable square */}
+          <Pressable onPress={handlePress}>
+            <Image 
+              source={currentImage}/>
+            {/* <View style={styles.square} /> */}
+          </Pressable>
+
           {/* Dialogue Text */}
           <Text style={styles.dialogue}>{firstmeeting(playerName)[currentIndex]}</Text>
           
@@ -52,11 +85,11 @@ export default function App() {
             // autoFocus
             /> 
           )}
+
+          {/* Buttons */}
+          <Pressable style={styles.button}
           
-          {/* Pressable square */}
-          <Pressable onPress={handlePress}>
-            <View style={styles.square} />
-          </Pressable>
+          
         </>
       )}
       
@@ -73,13 +106,8 @@ const styles = StyleSheet.create({
   },
   dialogue: {
     fontSize: 18,
-    textAlign: 'center'
-  },
-  square: {
-    width: 100,
-    height: 100,
-    backgroundColor: 'orange',
-    marginTop: 20,
+    textAlign: 'center',
+    padding: 10
   },
   input: {
     width: 200,
@@ -94,6 +122,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     width: '100%',
     height: '100%',
+  },
+  yesButton: {
+    backgroundColor
   }
 });
 
