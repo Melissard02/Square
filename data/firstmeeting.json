@@ -17,9 +17,21 @@
     "What?",
     "Nothing happened?",
     "Fine, I guess I'll close my eyes.",
-    "Closing them.",
     "Look at this!",
     "It's a bow!",
     "Do you like it?"
+  ],
+
+  "nobow": [
+    "Oh, okay, that's cool",
+    "Hey, {playerName}, I think I need to go.",
+    "See you later"
+  ],
+
+  "yesbow": [
+    "I knew you'd love it.",
+    "I think I'll have more things to show you later.",
+    "But my creator hasn't finished programming me yet.",
+    "Check back for more later :3"
   ]
 }

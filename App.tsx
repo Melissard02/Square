@@ -8,6 +8,7 @@ import { useBlackout } from './hooks/useBlackout';
 import SquareCharacter from './components/SquareCharacter';
 import DialogueBox from './components/DialogueBox';
 
+// Bring in images
 const images = {
     normal: require('./assets/2dsquare.png'),
     evolved: require('./assets/3dsquare.png'),
@@ -19,10 +20,15 @@ const images = {
 // Index for yes/no options
 const BUTTON_INDEX = 19;
 
+
+
 export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [playerName, setPlayerName] = useState("");
   const [currentImage, setCurrentImage] = useState(images.normal)
+  const [branch, setBranch] = useState<"none" | "yes" | "no">("none");
+  const [branchIndex, setBranchIndex] = useState(0);
+
 
   const {blackout, triggerBlackout} = useBlackout();
 
@@ -35,16 +41,24 @@ export default function App() {
   };
 
  const getDialogueLine = (index: number, playerName: string) => {
-    let line = dialogueData.dialogue[index];
-    if (line.includes("{playerName}")) {
-      line = line.replace("{playerName}", playerName || "???");
-    }
-    return line;
-  };
+  let line = dialogueData.dialogue[index];
+
+  if (branch === "yes" && dialogueData.dialogue[index + 1]?.yesbow) {
+    line = dialogueData.dialogue[index + 1].yesbow[0];
+  } else if (branch === "no" && dialogueData.dialogue[index + 1]?.nobow) {
+    line = dialogueData.dialogue[index + 1].nobow[0];
+  }
+
+  if (line.includes("{playerName}")) {
+    line = line.replace("{playerName}", playerName || "???");
+  }
+  return line;
+};
+
 
   // Run blackout
   useEffect(() => {
-    if (getDialogueLine(currentIndex, playerName) === "Closing them.") {
+    if (getDialogueLine(currentIndex, playerName) === "Look at this!") {
       triggerBlackout();
     }
   }, [currentIndex, playerName]);
@@ -82,12 +96,28 @@ export default function App() {
           )}
 
           {/* Buttons */}
-          <Pressable onPress={handlePress}>
-          </Pressable>
-          
+          {currentIndex === BUTTON_INDEX && (
+          <View style={{ flexDirection: 'row', gap: 20 }}>
+            <Pressable 
+              onPress={() => {
+                setCurrentImage(images.bow)
+                setBranch("yes");
+                setCurrentIndex(currentIndex + 1);  
+              }}>
+              <Image source={images.yesButton} style={{width: 100, height: 40}} />
+            </Pressable>
+
+            <Pressable onPress={() => {
+              setCurrentImage(images.normal)
+              setBranch("no");
+              setCurrentIndex(currentIndex + 1);
+            }}>
+              <Image source={images.noButton} style={{width: 100, height: 40}} />
+            </Pressable>
+          </View>
+          )}
         </>
       )}
-      
     </View>
   );
 }
