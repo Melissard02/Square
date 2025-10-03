@@ -16,7 +16,7 @@ export const appStyles = StyleSheet.create({
   input: {
     width: 200,
     height: 40,
-    backgroundColor: '#fcf6e5ff',
+    backgroundColor: '#f1f1f1ff',
     paddingHorizontal: 8,
     marginBottom: 20,
     borderRadius: 20,
